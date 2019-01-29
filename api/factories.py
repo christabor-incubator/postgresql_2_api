@@ -41,7 +41,7 @@ def generate_data(engine, dbsession, total=10):
     bm.Base.metadata.create_all(engine)
     for _ in range(total):
         {% for model in models %}
-            {{ model }}.create()
+        models.{{ model.name }}.create()
         {% endfor %}
     dbsession.commit()
 

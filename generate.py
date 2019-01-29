@@ -9,7 +9,7 @@ from sqlalchemy.ext.declarative.api import DeclarativeMeta
 
 DB_URI = os.getenv('TEST_DB_URI')
 
-invalid = ['Base']
+invalid = ['Base', 'models_module']
 
 cwd = os.getcwd()
 env = Environment(
@@ -19,10 +19,26 @@ env = Environment(
 
 
 def field_2_factory_func(field):
-    """Convert a sqlalchemy field into a corresponding factory boy function."""
-    def foo():
-        return ''
-    return foo
+    """Convert a sqlalchemy field into a corresponding factory boy function.
+
+    These functions are used as LazyAttribute functions that are
+    pre-defined in `factories.py`
+    """
+    field = repr(field)
+    return ''
+    if 'sql.sqltypes.Text' in field or 'sql.sqltypes.String' in field:
+        return 'rand_str'
+    elif 'sql.sqltypes.Date' in field:
+        return 'new_date'
+    elif 'sql.sqltypes.BigInteger' in field:
+        return 'rand_int'
+    elif 'sql.sqltypes.SmallInteger' in field:
+        return 'rand_int'
+    elif 'sql.sqltypes.Integer' in field:
+        return 'rand_int'
+    else:
+        print('COULD NOT FIND MAPPING!')
+    return ''
 
 
 def get_model_detail(models, module):
